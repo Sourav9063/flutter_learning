@@ -25,7 +25,10 @@ class _BounceAnimatedNavBarState extends State<BounceAnimatedNavBar> {
   }
 }
 
-const _movement = 50.0;
+const _movementWidth = 75.0;
+const _movementHeight = 25.0;
+Color _beginColor = Colors.red.withOpacity(.6);
+Color _endColor = Colors.blue.withOpacity(.6);
 
 class BounceNavBar extends StatefulWidget {
   BounceNavBar({Key? key}) : super(key: key);
@@ -39,17 +42,20 @@ class _BounceNavBarState extends State<BounceNavBar>
   late AnimationController _controller;
   late Animation _animeNavBarIn;
   late Animation _animeNavBarOut;
+  late Animation _animatedColor;
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 1200));
     _animeNavBarIn =
-        CurveTween(curve: Interval(0.1, .6, curve: Curves.decelerate))
+        CurveTween(curve: Interval(0.0, .6, curve: Curves.decelerate))
             .animate(_controller);
     _animeNavBarOut =
         CurveTween(curve: Interval(0.6, 1, curve: Curves.bounceOut))
             .animate(_controller);
+    _animatedColor =
+        ColorTween(begin: _beginColor, end: _endColor).animate(_controller);
   }
 
   @override
@@ -62,31 +68,67 @@ class _BounceNavBarState extends State<BounceNavBar>
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     double currentWidth = width;
+    double currentHeight = kBottomNavigationBarHeight;
     print("NavBar build");
     return SizedBox(
-      height: kBottomNavigationBarHeight,
       child: AnimatedBuilder(
           animation: _controller,
           builder: (context, _) {
             currentWidth = width -
-                (_movement * _animeNavBarIn.value) +
-                (_movement * _animeNavBarOut.value);
-            return Center(
+                (_movementWidth * _animeNavBarIn.value) +
+                (_movementWidth * _animeNavBarOut.value);
+            currentHeight = kBottomNavigationBarHeight +
+                (_movementHeight * _animeNavBarIn.value) -
+                (_movementHeight * _animeNavBarOut.value);
+            return Align(
+              alignment: Alignment(0, .95),
               child: Container(
-                  width: currentWidth,
+                  height: currentHeight,
+                  width: currentWidth - 20,
                   decoration: BoxDecoration(
-                      color: Colors.red,
-                      borderRadius:
-                          BorderRadius.vertical(top: Radius.circular(20))),
+                      color: _animatedColor.value,
+                      borderRadius: BorderRadius.all(Radius.circular(10))),
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      CircleAvatar(
-                        radius: 35,
-                        child: GestureDetector(
-                          child: Icon(Icons.person),
-                          onTap: () {
-                            _controller.forward(from: 0.0);
-                          },
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: CircleAvatar(
+                          backgroundColor: Colors.blue,
+                          radius: 20,
+                          child: GestureDetector(
+                            child: Icon(Icons.person),
+                            onTap: () {
+                              _endColor = Colors.blue.withOpacity(.6);
+                              _animatedColor =
+                                  ColorTween(begin: _beginColor, end: _endColor)
+                                      .animate(_controller);
+
+                              _controller.forward(from: 0.0).whenComplete(() {
+                                _beginColor = Colors.blue.withOpacity(.6);
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: CircleAvatar(
+                          backgroundColor: Colors.yellow.withOpacity(.6),
+                          radius: 20,
+                          child: GestureDetector(
+                            child: Icon(Icons.person),
+                            onTap: () {
+                              _endColor = Colors.yellow.withOpacity(.6);
+                              _animatedColor =
+                                  ColorTween(begin: _beginColor, end: _endColor)
+                                      .animate(_controller);
+
+                              _controller.forward(from: 0.0).whenComplete(() {
+                                _beginColor = Colors.yellow.withOpacity(.6);
+                              });
+                            },
+                          ),
                         ),
                       ),
                     ],
