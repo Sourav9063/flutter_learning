@@ -3,4 +3,7 @@
  
    -BounceAnimatedBottomNavBar
    
-![flutter_learning 2021-09-10 19-53-50](https://user-images.githubusercontent.com/53114581/132871464-059e9326-6752-4db4-8872-ce41f379cb6a.gif)
+
+https://user-images.githubusercontent.com/53114581/132875918-b22d272c-6595-46b7-8ee0-bc8ba431ade0.mp4
+
+
